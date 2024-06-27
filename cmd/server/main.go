@@ -4,7 +4,8 @@ import (
 	"context"
 	"log"
 	"net"
-	pb "servergrpc/api/proto/pb"
+
+	pb "github.com/MajotraderLucky/ServerGRPC/api/proto/pb"
 
 	"google.golang.org/grpc"
 )

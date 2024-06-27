@@ -1,4 +1,4 @@
-module servergrpc
+module github.com/MajotraderLucky/ServerGRPC
 
 go 1.20
 

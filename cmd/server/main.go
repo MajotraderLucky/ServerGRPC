@@ -6,6 +6,7 @@ import (
 	"net"
 
 	pb "github.com/MajotraderLucky/ServerGRPC/api/proto/pb"
+	"github.com/MajotraderLucky/ServerGRPC/internal/config"
 
 	"google.golang.org/grpc"
 )
@@ -19,7 +20,12 @@ func (s *server) Echo(ctx context.Context, in *pb.EchoRequest) (*pb.EchoResponse
 }
 
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	cfg, err := config.LoadConfig("config/config.json")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
+	lis, err := net.Listen("tcp", cfg.ServerAddress)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

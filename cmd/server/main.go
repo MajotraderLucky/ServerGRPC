@@ -20,22 +20,34 @@ func (s *server) Echo(ctx context.Context, in *pb.EchoRequest) (*pb.EchoResponse
 }
 
 func main() {
-	cfg, err := config.LoadConfig("config/config.json")
+	cfg, err := loadConfig()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	// Setup TLS
-	creds, err := credentials.NewServerTLSFromFile(cfg.ServerCert, cfg.ServerKey)
+	creds, err := setupTLS(cfg)
 	if err != nil {
 		log.Fatalf("failed to load TLS credentials: %v", err)
 	}
 
-	// Create gRPC server with TLS
-	s := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterSimpleServiceServer(s, &server{})
+	gRPCServer := createGRPCServer(creds)
+	startServer(gRPCServer, cfg.ServerAddress)
+}
 
-	lis, err := net.Listen("tcp", cfg.ServerAddress)
+func loadConfig() (*config.Config, error) {
+	return config.LoadConfig("config/config.json")
+}
+
+func setupTLS(cfg *config.Config) (credentials.TransportCredentials, error) {
+	return credentials.NewServerTLSFromFile(cfg.ServerCert, cfg.ServerKey)
+}
+
+func createGRPCServer(creds credentials.TransportCredentials) *grpc.Server {
+	return grpc.NewServer(grpc.Creds(creds))
+}
+
+func startServer(s *grpc.Server, address string) {
+	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

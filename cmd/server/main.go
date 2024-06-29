@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cfg, err := loadConfig()
+	cfg, err := config.LoadConfig("config/config.json")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
@@ -21,8 +21,4 @@ func main() {
 
 	gRPCServer := service.CreateGRPCServer(creds)
 	service.StartServer(gRPCServer, cfg.ServerAddress)
-}
-
-func loadConfig() (*config.Config, error) {
-	return config.LoadConfig("config/config.json")
 }

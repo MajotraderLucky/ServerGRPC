@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"log"
-	"net"
 
 	"github.com/MajotraderLucky/ServerGRPC/api/proto/pb"
 	"github.com/MajotraderLucky/ServerGRPC/internal/config"
+	"github.com/MajotraderLucky/ServerGRPC/internal/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	gRPCServer := createGRPCServer(creds)
-	startServer(gRPCServer, cfg.ServerAddress)
+	service.StartServer(gRPCServer, cfg.ServerAddress)
 }
 
 func loadConfig() (*config.Config, error) {
@@ -46,15 +46,4 @@ func createGRPCServer(creds credentials.TransportCredentials) *grpc.Server {
 	s := grpc.NewServer(grpc.Creds(creds))
 	pb.RegisterSimpleServiceServer(s, &server{})
 	return s
-}
-
-func startServer(s *grpc.Server, address string) {
-	lis, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
 }

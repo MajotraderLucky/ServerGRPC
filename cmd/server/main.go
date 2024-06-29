@@ -43,7 +43,9 @@ func setupTLS(cfg *config.Config) (credentials.TransportCredentials, error) {
 }
 
 func createGRPCServer(creds credentials.TransportCredentials) *grpc.Server {
-	return grpc.NewServer(grpc.Creds(creds))
+	s := grpc.NewServer(grpc.Creds(creds))
+	pb.RegisterSimpleServiceServer(s, &server{})
+	return s
 }
 
 func startServer(s *grpc.Server, address string) {

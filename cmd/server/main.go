@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/MajotraderLucky/ServerGRPC/internal/config"
+	"github.com/MajotraderLucky/ServerGRPC/internal/security"
 	"github.com/MajotraderLucky/ServerGRPC/internal/service"
-	"google.golang.org/grpc/credentials"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	creds, err := setupTLS(cfg)
+	creds, err := security.SetupTLS(cfg)
 	if err != nil {
 		log.Fatalf("failed to load TLS credentials: %v", err)
 	}
@@ -25,8 +25,4 @@ func main() {
 
 func loadConfig() (*config.Config, error) {
 	return config.LoadConfig("config/config.json")
-}
-
-func setupTLS(cfg *config.Config) (credentials.TransportCredentials, error) {
-	return credentials.NewServerTLSFromFile(cfg.ServerCert, cfg.ServerKey)
 }

@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/MajotraderLucky/ServerGRPC/api/proto/pb"
+	"github.com/MajotraderLucky/ServerGRPC/api/proto/pb"
 	"github.com/MajotraderLucky/ServerGRPC/internal/config"
-
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type server struct {
@@ -25,12 +25,20 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
+	// Setup TLS
+	creds, err := credentials.NewServerTLSFromFile(cfg.ServerCert, cfg.ServerKey)
+	if err != nil {
+		log.Fatalf("failed to load TLS credentials: %v", err)
+	}
+
+	// Create gRPC server with TLS
+	s := grpc.NewServer(grpc.Creds(creds))
+	pb.RegisterSimpleServiceServer(s, &server{})
+
 	lis, err := net.Listen("tcp", cfg.ServerAddress)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterSimpleServiceServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

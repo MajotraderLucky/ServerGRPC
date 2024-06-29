@@ -7,6 +7,8 @@ import (
 
 type Config struct {
 	ServerAddress string `json:"serverAddress"`
+	ServerCert    string `json:"serverCert"`
+	ServerKey     string `json:"serverKey"`
 }
 
 func LoadConfig(path string) (*Config, error) {

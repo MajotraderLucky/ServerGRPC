@@ -3,6 +3,8 @@ module github.com/MajotraderLucky/ServerGRPC
 go 1.20
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/joho/godotenv v1.5.1
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2
 )

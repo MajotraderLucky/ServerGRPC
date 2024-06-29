@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	// Инициализация настроек безопасности, загрузка .env файла
+	security.Init()
+
 	cfg, err := config.LoadConfig("config/config.json")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
